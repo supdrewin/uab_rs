@@ -1,0 +1,9 @@
+[package]
+name = "uab_rs"
+version = "0.0.0"
+edition = "2024"
+license = "MIT"
+authors = ["Alvin Null <supdrewin@outlook.com>"]
+repository = "https://github.com/supdrewin/uab_rs/"
+
+[dependencies]
