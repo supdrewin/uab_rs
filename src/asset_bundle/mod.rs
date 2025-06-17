@@ -15,7 +15,7 @@ pub enum CompressionType {
 #[repr(u32)]
 #[derive(Debug)]
 pub struct ArchiveFlags {
-    compression_type_mask: CompressionType,
+    compression_type: CompressionType,
     blocks_and_directory_info_combined: bool,
     blocks_info_at_the_end: bool,
     old_web_plugin_compatibility: bool,
