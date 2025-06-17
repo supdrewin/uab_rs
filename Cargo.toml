@@ -8,3 +8,5 @@ repository = "https://github.com/supdrewin/uab_rs/"
 description = "Unity AssetBundle Tools in Rust"
 
 [dependencies]
+aes = "*"
+modular-bitfield = "*"

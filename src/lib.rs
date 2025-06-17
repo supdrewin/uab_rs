@@ -11,27 +11,86 @@ impl<'a> BinaryReader<'a> {
         Self { buffer, cursor: 0 }
     }
 
-    pub fn read_string(&mut self, len: usize) -> String {
+    pub fn read_bytes(&mut self, len: usize) -> &'a [u8] {
         let cursor = self.cursor;
         self.cursor += len;
 
-        String::from_iter(
-            self.buffer[cursor..self.cursor]
-                .iter()
-                .map(|&byte| byte as char),
-        )
+        &self.buffer[cursor..self.cursor]
     }
 
-    pub fn read_string_to_null(&mut self) -> String {
-        let mut result = String::new();
+    pub fn read_u16(&mut self) -> u16 {
+        let bits = u16::BITS as usize;
 
-        while {
-            let byte = self.buffer[self.cursor];
+        self.read_bytes(bits / 8)
+            .iter()
+            .enumerate()
+            .map(|(i, &byte)| (byte as u16) << (bits - (i + 1) * 8))
+            .sum()
+    }
+
+    pub fn read_u32(&mut self) -> u32 {
+        let bits = u32::BITS as usize;
+
+        self.read_bytes(bits / 8)
+            .iter()
+            .enumerate()
+            .map(|(i, &byte)| (byte as u32) << (bits - (i + 1) * 8))
+            .sum()
+    }
+
+    pub fn read_u64(&mut self) -> u64 {
+        let bits = u64::BITS as usize;
+
+        self.read_bytes(bits / 8)
+            .iter()
+            .enumerate()
+            .map(|(i, &byte)| (byte as u64) << (bits - (i + 1) * 8))
+            .sum()
+    }
+
+    pub fn read_i16(&mut self) -> i16 {
+        let bits = i16::BITS as usize;
+
+        self.read_bytes(bits / 8)
+            .iter()
+            .enumerate()
+            .map(|(i, &byte)| (byte as i16) << (bits - (i + 1) * 8))
+            .sum()
+    }
+
+    pub fn read_i32(&mut self) -> i32 {
+        let bits = i32::BITS as usize;
+
+        self.read_bytes(bits / 8)
+            .iter()
+            .enumerate()
+            .map(|(i, &byte)| (byte as i32) << (bits - (i + 1) * 8))
+            .sum()
+    }
+
+    pub fn read_i64(&mut self) -> i64 {
+        let bits = i64::BITS as usize;
+
+        self.read_bytes(bits / 8)
+            .iter()
+            .enumerate()
+            .map(|(i, &byte)| (byte as i64) << (bits - (i + 1) * 8))
+            .sum()
+    }
+
+    pub fn read_cstr(&mut self) -> String {
+        let cursor = self.cursor;
+
+        while self.buffer[self.cursor] != 0 {
             self.cursor += 1;
+        }
 
-            0.ne(&byte).then(|| result.push(byte as char)).is_some()
-        } {}
+        let result = self.buffer[cursor..self.cursor].to_vec();
+        self.cursor += 1;
 
-        result
+        unsafe { String::from_utf8_unchecked(result) }
     }
 }
+
+#[cfg(test)]
+mod tests;
